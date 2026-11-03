@@ -692,7 +692,7 @@ function filterTitle(){
 function rowHtml(it){
   const t = it.type==='stay' ? '숙소' : esc(it.time || '');
   return `<button class="row" data-id="${it.id}">${dotHtml(it)}<span class="t tnum">${t}</span>
-    <span class="n"><b>${esc(it.name)}${conflict(it)?svg('warning--alt',12):''}</b><span>${typeLabel(it)} · ${it.status==='confirmed'?'확정':'후보'} · <span class="tnum">${costText(it.cost,true)}</span></span>${tagsHtml(it)}</span></button>`;
+    <span class="n"><b>${esc(it.name)}${conflict(it)?svg('warning--alt',12):''}</b><span>${typeLabel(it)} · ${it.status==='confirmed'?'확정':'후보'} · <span class="tnum">${costText(it.cost,true)}</span>${it.addedBy==='pa'?' · PA가 넣음':''}</span>${tagsHtml(it)}</span></button>`;
 }
 function renderList(){
   const vis = visible().sort((a,b) => sortKey(a).localeCompare(sortKey(b)));
@@ -864,7 +864,7 @@ function renderTable(){
   const rows = ITEMS.filter(i => TYPES[i.type] && (state.ftype==='all' || i.type===state.ftype)).sort((a,b) => sortKey(a).localeCompare(sortKey(b)));
   $('#tbody').innerHTML = rows.length ? rows.map(it => `<tr data-id="${it.id}">
     <td class="c-ty"><span class="ty">${dotHtml(it,true)}${typeLabel(it)}</span></td>
-    <td class="c-nm nm"><b>${esc(it.name)}</b>${it.local?`<span>${esc(it.local)}</span>`:''}${conflict(it)?`<span class="wtxt">${svg('warning--alt',12)}${closedNote(it)} — ${md(it.date)} 배정</span>`:''}</td>
+    <td class="c-nm nm"><b>${esc(it.name)}</b>${it.local?`<span>${esc(it.local)}</span>`:''}${it.addedBy==='pa'?'<span>PA가 넣음</span>':''}${conflict(it)?`<span class="wtxt">${svg('warning--alt',12)}${closedNote(it)} — ${md(it.date)} 배정</span>`:''}</td>
     <td class="c-st">${it.status==='confirmed'?'확정':'후보'}</td>
     <td class="c-dt tnum">${when(it)}</td>
     <td class="c-cost tnum">${costText(it.cost,true)}</td>
