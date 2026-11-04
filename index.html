@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>신혼여행 지도</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-EcpyzNws+C2ej/Lzr5u0M+A8D/30yKKrf29X/rIZbXc=' https://www.gstatic.com https://apis.google.com; connect-src 'self' blob: https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://tiles.openfreemap.org https://photon.komoot.io https://api.frankfurter.dev https://www.gstatic.com; frame-src https://honeymoon-map-178b6.firebaseapp.com https://accounts.google.com https://apis.google.com; img-src 'self' data: blob: https://tiles.openfreemap.org; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-VC8fnx3IjEE1DdsSedvhuhyQjIXalFUqPgbJrCrLxEg=' https://www.gstatic.com https://apis.google.com; connect-src 'self' blob: https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://tiles.openfreemap.org https://photon.komoot.io https://api.frankfurter.dev https://www.gstatic.com; frame-src https://honeymoon-map-178b6.firebaseapp.com https://accounts.google.com https://apis.google.com; img-src 'self' data: blob: https://tiles.openfreemap.org; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; object-src 'none'; base-uri 'none'; form-action 'self'">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#161616">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -383,7 +383,7 @@ main{position:relative;min-height:0}
         <div class="ph" id="ph"><span class="grip"></span><button class="back" id="back" hidden aria-label="목록으로"></button><h2 id="ptitle">전체 일정</h2><span class="cnt tnum" id="pcnt"></span></div>
         <div class="pbody" id="pbody"></div>
       </aside>
-      <button class="fab" id="fab"><span id="fab-ic"></span>PA에게 부탁</button>
+      <button class="fab" id="fab"><span id="fab-ic"></span>AI에게 부탁</button>
       <div class="pickbar" id="pickbar" hidden><span id="picktxt">지도를 눌러 위치를 고르세요</span><button id="pickcancel">취소</button></div>
     </section>
     <section class="view" id="view-info" hidden aria-label="정보">
@@ -406,8 +406,8 @@ main{position:relative;min-height:0}
 </div>
 <div class="toast" id="toast" role="status" hidden></div>
 <div class="undo" id="undo" hidden><span id="undotxt"></span><button type="button" id="undobtn">되돌리기</button></div>
-<section class="overlay" id="composer" hidden aria-label="PA에게 부탁">
-  <div class="ph"><h2>PA에게 부탁</h2><button class="back" id="cclose" aria-label="닫기"></button></div>
+<section class="overlay" id="composer" hidden aria-label="AI에게 부탁">
+  <div class="ph"><h2>AI에게 부탁</h2><button class="back" id="cclose" aria-label="닫기"></button></div>
   <div class="obody">
     <p class="wstat" id="wstatus"></p>
     <p class="ctarget" id="ctarget" hidden></p>
@@ -770,7 +770,7 @@ function filterTitle(){
 function rowHtml(it){
   const t = it.type==='stay' ? '숙소' : esc(it.time || '');
   return `<button class="row" data-id="${esc(it.id)}">${dotHtml(it)}<span class="t tnum">${t}</span>
-    <span class="n"><b>${esc(it.name)}${conflict(it)?svg('warning--alt',12):''}</b><span>${typeLabel(it)} · ${it.status==='confirmed'?'확정':'후보'} · <span class="tnum">${costText(it.cost,true)}</span>${it.addedBy==='pa'?(it.reviewed===false?' · PA가 넣음(확인 전)':' · PA가 넣음'):''}</span>${tagsHtml(it)}</span></button>`;
+    <span class="n"><b>${esc(it.name)}${conflict(it)?svg('warning--alt',12):''}</b><span>${typeLabel(it)} · ${it.status==='confirmed'?'확정':'후보'} · <span class="tnum">${costText(it.cost,true)}</span>${it.addedBy==='pa'?(it.reviewed===false?' · AI가 넣음(확인 전)':' · AI가 넣음'):''}</span>${tagsHtml(it)}</span></button>`;
 }
 function renderList(){
   const vis = visible().sort((a,b) => sortKey(a).localeCompare(sortKey(b)));
@@ -943,7 +943,7 @@ function renderTable(){
   const rows = ITEMS.filter(i => TYPES[i.type] && (state.ftype==='all' || i.type===state.ftype)).sort((a,b) => sortKey(a).localeCompare(sortKey(b)));
   $('#tbody').innerHTML = rows.length ? rows.map(it => `<tr data-id="${esc(it.id)}">
     <td class="c-ty"><span class="ty">${dotHtml(it,true)}${typeLabel(it)}</span></td>
-    <td class="c-nm nm"><b>${esc(it.name)}</b>${it.local?`<span>${esc(it.local)}</span>`:''}${it.addedBy==='pa'?'<span>PA가 넣음</span>':''}${conflict(it)?`<span class="wtxt">${svg('warning--alt',12)}${closedNote(it)} — ${md(it.date)} 배정</span>`:''}</td>
+    <td class="c-nm nm"><b>${esc(it.name)}</b>${it.local?`<span>${esc(it.local)}</span>`:''}${it.addedBy==='pa'?'<span>AI가 넣음</span>':''}${conflict(it)?`<span class="wtxt">${svg('warning--alt',12)}${closedNote(it)} — ${md(it.date)} 배정</span>`:''}</td>
     <td class="c-st">${it.status==='confirmed'?'확정':'후보'}</td>
     <td class="c-dt tnum">${when(it)}</td>
     <td class="c-cost tnum">${costText(it.cost,true)}</td>
@@ -1223,7 +1223,7 @@ onAuthStateChanged(auth, u => {
   startData();
 });
 
-/* ===== 2단계: PA에게 부탁 · 새 후보 확인 · 빠른 버튼 (2단계-명세 §6) ===== */
+/* ===== 2단계: AI에게 부탁 · 새 후보 확인 · 빠른 버튼 (2단계-명세 §6) ===== */
 const reqCol = collection(tripRef, 'requests');
 const metaRef = doc(tripRef, 'meta', 'worker');
 let REQS = [], WMETA = null, reqLoaded = false, pendingShare = null, sched = null, undoTimer = null, workerTimer = null;
@@ -1261,12 +1261,12 @@ function startStage2(){
 /* --- 작업기 상태 --- */
 function workerState(){
   const seen = tsDate(WMETA && WMETA.lastSeen);
-  if(!seen) return ['warn', 'PA 상태를 아직 몰라요 — 보내 두면 PA가 켜질 때 처리해요'];
+  if(!seen) return ['warn', 'AI 상태를 아직 몰라요 — 보내 두면 AI가 켜질 때 처리해요'];
   const age = (Date.now() - seen.getTime()) / 60000;
-  if(age > 3) return ['warn', `PA 꺼짐(마지막 확인 ${Math.round(age)}분 전) — 켜지면 처리해요`];
-  if(WMETA.state === 'limit') return ['warn', `PA가 바빠요 — ${hhmm(WMETA.nextTryAt) || '잠시 뒤'}쯤 다시 처리해요`];
-  if(WMETA.state === 'auth') return ['warn', 'PA 로그인 만료 — 관리자 조치가 필요해요'];
-  return ['ok', `PA 응답 가능 · ${age < 1 ? '방금' : Math.round(age) + '분 전'} 확인`];
+  if(age > 3) return ['warn', `AI 꺼짐(마지막 확인 ${Math.round(age)}분 전) — 켜지면 처리해요`];
+  if(WMETA.state === 'limit') return ['warn', `AI가 바빠요 — ${hhmm(WMETA.nextTryAt) || '잠시 뒤'}쯤 다시 처리해요`];
+  if(WMETA.state === 'auth') return ['warn', 'AI 연결이 끊겼어요 — 다시 로그인해야 해요'];
+  return ['ok', `AI 응답 가능 · ${age < 1 ? '방금' : Math.round(age) + '분 전'} 확인`];
 }
 function renderWorker(){
   const [cls, text] = workerState();
@@ -1282,12 +1282,12 @@ function notifyReq(r){
   if(r.status === 'done'){
     const names = (res.added || []).map(id => ITEMS.find(i => i.id === id)).filter(Boolean);
     const first = names[0] || (res.updated && res.updated[0] ? ITEMS.find(i => i.id === res.updated[0]) : null);
-    const text = names.length ? `${names.map(i => i.name).join(', ')} 등록됨` : (res.updated && res.updated.length ? '항목을 고쳤어요' : (res.dup && res.dup.length ? '이미 있는 곳이에요' : 'PA가 처리했어요'));
+    const text = names.length ? `${names.map(i => i.name).join(', ')} 등록됨` : (res.updated && res.updated.length ? '항목을 고쳤어요' : (res.dup && res.dup.length ? '이미 있는 곳이에요' : 'AI가 처리했어요'));
     showAction(text, '보기', () => first ? viewItem(first.id) : openComposer(), 8000);
   } else if(r.status === 'question'){
-    showAction('PA가 물어봐요', '보기', () => openComposer(), 8000);
+    showAction('AI가 물어봐요', '보기', () => openComposer(), 8000);
   } else if(r.status === 'failed'){
-    showAction('PA가 처리하지 못했어요', '보기', () => openComposer(), 8000);
+    showAction('AI가 처리하지 못했어요', '보기', () => openComposer(), 8000);
   }
 }
 function showAction(text, label, fn, ms = 6000){
@@ -1317,7 +1317,7 @@ function openComposer(opt = {}){
     t.hidden = false;
   } else if(comp.retryOf){
     const r = reqCache.get(comp.retryOf);
-    t.textContent = `이어서 보내기${r && r.result && r.result.question ? ' — PA 질문: ' + r.result.question : ''}`;
+    t.textContent = `이어서 보내기${r && r.result && r.result.question ? ' — AI 질문: ' + r.result.question : ''}`;
     t.hidden = false;
   } else t.hidden = true;
   renderAtts(); renderWorker(); renderReqs();
@@ -1395,7 +1395,7 @@ $('#csend').addEventListener('click', async () => {
     const r = await sendRequest({text, target:comp.target, retryOf:comp.retryOf, atts:comp.atts});
     comp.atts = []; comp.target = null; comp.retryOf = null;
     $('#ctext').value = ''; $('#ctarget').hidden = true; renderAtts();
-    toast(r === 'offline' ? '인터넷이 연결되면 보내져요' : '보냈어요. PA가 처리하면 알려 드릴게요');
+    toast(r === 'offline' ? '인터넷이 연결되면 보내져요' : '보냈어요. AI가 처리하면 알려 드릴게요');
   }catch(err){ toast(`보내지 못했어요 (${err.code || err.message})`); }
   finally{ $('#csend').disabled = false; }
 });
@@ -1414,7 +1414,7 @@ function reqHtml(r){
     if(res.dup && res.dup.length) parts.push('이미 있음: ' + res.dup.map(d => `<button class="linkbtn" data-open="${esc(d.id)}">${esc(d.name || '보기')}</button>`).join(' · '));
     if(!parts.length) parts.push('새로 넣은 곳 없음');
     rr = parts.join('<br>') + (res.note ? `<br><span class="hint">${esc(res.note)}</span>` : '');
-  } else if(r.status === 'question') rr = 'PA: ' + esc(res.question || '');
+  } else if(r.status === 'question') rr = 'AI: ' + esc(res.question || '');
   else if(r.status === 'failed') rr = esc(r.error || '처리하지 못했어요');
   else if(r.status === 'queued' && r.nextTryAt) rr = `${esc(hhmm(r.nextTryAt))}쯤 다시 시도해요`;
   const acts = [];
@@ -1513,8 +1513,8 @@ function linksBlock(it, withMaps){
 function paLine(it){
   if(it.addedBy !== 'pa') return '';
   return it.reviewed === false
-    ? `<div class="chk">PA가 넣은 후보 — 아직 확인 전이에요 <button class="sbtn" data-qa="ok">맞아요</button></div>`
-    : '<p class="hint">PA가 넣음</p>';
+    ? `<div class="chk">AI가 넣은 후보 — 아직 확인 전이에요 <button class="sbtn" data-qa="ok">맞아요</button></div>`
+    : '<p class="hint">AI가 넣음</p>';
 }
 function quickActions(it){
   const b = [];
@@ -1524,7 +1524,7 @@ function quickActions(it){
   const rl = (it.links || []).find(l => safeUrl(l.u) && /예약|book|reserv/i.test(String(l.t) + l.u));
   if(rl) b.push(`<a class="sbtn" href="${esc(safeUrl(rl.u))}" target="_blank" rel="noopener noreferrer">예약 페이지 열기<span class="dom">${esc(domainOf(rl.u))}</span></a>`);
   if(it.type !== 'move' && it.lnglat) b.push(`<a class="sbtn" href="https://www.google.com/maps/dir/?api=1&destination=${it.lnglat[1]},${it.lnglat[0]}" target="_blank" rel="noopener noreferrer">길찾기</a>`);
-  if(it.type !== 'move') b.push(`<button class="sbtn" data-qa="recheck">PA에게 다시 확인</button>`);
+  if(it.type !== 'move') b.push(`<button class="sbtn" data-qa="recheck">AI에게 다시 확인</button>`);
   b.push(`<button class="sbtn" data-qa="edit">직접 고치기</button>`);
   b.push(`<button class="sbtn" data-qa="del">지우기</button>`);
   return `<div class="qa">${b.join('')}</div>`;
@@ -1563,7 +1563,7 @@ $('#pbody').addEventListener('click', e => {
   if(stt && sched){ sched.time = stt.dataset.stime || null; $('#schedbox').innerHTML = schedHtml(it); return; }
   if(al){
     const a = (it.alts || [])[Number(al.dataset.alt)]; if(!a) return;
-    sendRequest({text:`이 후보로 바꿔줘: ${a.local || a.name}${a.place ? ' (' + a.place + ')' : ''}`, target:id, atts:[]}).then(() => toast('PA에게 바꿔 달라고 보냈어요')).catch(err => toast(`보내지 못했어요 (${err.code || err.message})`));
+    sendRequest({text:`이 후보로 바꿔줘: ${a.local || a.name}${a.place ? ' (' + a.place + ')' : ''}`, target:id, atts:[]}).then(() => toast('AI에게 바꿔 달라고 보냈어요')).catch(err => toast(`보내지 못했어요 (${err.code || err.message})`));
     return;
   }
   if(!q) return;

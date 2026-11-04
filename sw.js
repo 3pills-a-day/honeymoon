@@ -1,5 +1,5 @@
 /* 신혼여행 지도 서비스 워커 — 화면 캐시(index는 네트워크 우선) + 안드로이드 공유 받기 */
-const CACHE = 'hm-d8aa612f0cfc';
+const CACHE = 'hm-4faf9ba86aa0';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './vendor/maplibre-gl.mjs', './vendor/maplibre-gl-worker.mjs', './icons/icon-192.png'];
 
 self.addEventListener('install', e => {
