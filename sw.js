@@ -1,5 +1,10 @@
-/* 신혼여행 지도 서비스 워커 — 화면 캐시(index는 네트워크 우선) + 안드로이드 공유 받기 */
-const CACHE = 'hm-4faf9ba86aa0';
+/* 신혼여행 지도 서비스 워커 — 화면 캐시(index는 네트워크 우선) + 안드로이드 공유 받기 + 지도 오프라인(3단계 설계 §2-5) */
+const CACHE = 'hm-4bfee826572f';
+/* 지도 캐시는 빌드가 바뀌어도 지우지 않는다: hmmap-<도시>(내려받기), hmmap-common, hmofm(지도에서 본 곳) */
+const OFM = 'https://tiles.openfreemap.org';
+const TILE_RE = /^\/planet\/[^/]+\/(\d+)\/(\d+)\/(\d+)\.pbf$/;
+const SEEN = 'hmofm', SEEN_MAX = 4000;
+const tileKey = (z, x, y) => `${OFM}/__t/${z}/${x}/${y}.pbf`;
 const SHELL = ['./', './index.html', './manifest.webmanifest', './vendor/maplibre-gl.mjs', './vendor/maplibre-gl-worker.mjs', './icons/icon-192.png'];
 
 self.addEventListener('install', e => {
@@ -15,6 +20,11 @@ self.addEventListener('fetch', e => {
     e.respondWith(takeShare(e.request));
     return;
   }
+  if(e.request.method === 'GET' && u.origin === OFM){
+    const m = u.pathname.match(TILE_RE);
+    e.respondWith(m ? tileFetch(e.request, tileKey(m[1], m[2], m[3])) : netFirst(e.request));
+    return;
+  }
   if(e.request.method !== 'GET' || u.origin !== location.origin) return;
   if(e.request.mode === 'navigate' || u.pathname.endsWith('/') || u.pathname.endsWith('/index.html')){
     e.respondWith(fetch(e.request).then(r => {
@@ -25,6 +35,26 @@ self.addEventListener('fetch', e => {
   }
   e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
 });
+
+/* 타일 주소에는 판 날짜가 들어 있어 날짜를 뺀 열쇠로 찾는다 — 내려받은 타일이 판이 바뀌어도 쓰인다 */
+async function tileFetch(req, key){
+  const hit = await caches.match(key);
+  if(hit) return hit;
+  const r = await fetch(req);
+  if(r.ok){ const c = r.clone(); caches.open(SEEN).then(x => x.put(key, c)).then(trim).catch(() => {}); }
+  return r;
+}
+async function netFirst(req){
+  const net = fetch(req).then(r => { if(r.ok){ const c = r.clone(); caches.open(SEEN).then(x => x.put(req.url, c)).catch(() => {}); } return r; });
+  try{ return await Promise.race([net, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 5000))]); }
+  catch(_){ const hit = await caches.match(req.url); return hit || net; }
+}
+let puts = 0;
+async function trim(){
+  if(++puts % 50) return;
+  const c = await caches.open(SEEN), ks = await c.keys();
+  for(const k of ks.slice(0, Math.max(0, ks.length - SEEN_MAX))) await c.delete(k);
+}
 
 function idbPut(value){
   return new Promise((resolve, reject) => {
